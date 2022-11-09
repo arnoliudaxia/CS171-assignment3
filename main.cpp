@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
   Vec3f cam_pos(0, -3, 1.3);
   Vec3f cam_look_at(0, 0, 1);
 
-  // init image.
+  // init image.23
   std::shared_ptr<ImageRGB> rendered_img
       = std::make_shared<ImageRGB>(img_resolution.x(), img_resolution.y());
   // camera setting
