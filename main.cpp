@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
   Vec3f cam_pos(0, -3, 1.3);
   Vec3f cam_look_at(0, 0, 1);
 
-  // init image.23
+  // init image
   std::shared_ptr<ImageRGB> rendered_img
       = std::make_shared<ImageRGB>(img_resolution.x(), img_resolution.y());
   // camera setting
@@ -35,6 +35,7 @@ int main(int argc, char *argv[]) {
   std::unique_ptr<PhongLightingIntegrator> integrator
       = std::make_unique<PhongLightingIntegrator>(camera, scene);
   std::cout << "Start Rendering..." << std::endl;
+
   auto start = std::chrono::steady_clock::now();
   // render scene
   integrator->render();

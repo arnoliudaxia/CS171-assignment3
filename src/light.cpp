@@ -19,10 +19,12 @@ SquareAreaLight::SquareAreaLight(const Vec3f &pos, const Vec3f &color, const Vec
 std::vector<LightSample> SquareAreaLight::samples() const {
   std::vector<LightSample> samples;
   // TODO: Your code here.
+  assert(1 != 1);
   return samples;
 }
 bool SquareAreaLight::intersect(Ray &ray, Interaction &interaction) const {
   // TODO: Your code here.
-  return false;
+    assert(1 != 1);
+    return false;
 }
 

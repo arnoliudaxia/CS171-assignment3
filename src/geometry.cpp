@@ -9,6 +9,7 @@ Triangle::Triangle(Vec3f v0, Vec3f v1, Vec3f v2)
 
 bool Triangle::intersect(Ray &ray, Interaction &interaction) const {
   // TODO: Your code here.
+    assert(1 != 1);
   return false;
 }
 
@@ -20,8 +21,23 @@ Rectangle::Rectangle(Vec3f position, Vec2f dimension, Vec3f normal, Vec3f tangen
       tangent(std::move(tangent)) {}
 
 bool Rectangle::intersect(Ray &ray, Interaction &interaction) const {
-  // TODO: Your code here
-  return false;
+  // TODO: 需要测试
+    //ray上的点和中心的连线和法线点积为0
+    float t = (normal.dot(position - ray.origin)) / (ray.direction.dot(normal));
+    if (t < 0) {
+        return false;
+    }
+    Vec3f intersectPoint = ray.origin + t * ray.direction;
+    Vec3f delta = intersectPoint - position;
+    float touying = abs(delta.dot(tangent));
+    if (touying > size[0] / 2) {
+        return false;
+    }
+    if (sqrtf(delta.dot(delta) - touying* touying)>size[1]/2)
+    {
+        return false;
+    }
+    return true;
 }
 Vec2f Rectangle::getSize() const {
   return size;
@@ -38,5 +54,13 @@ Ellipsoid::Ellipsoid(const Vec3f &p, const Vec3f &a, const Vec3f &b, const Vec3f
 
 bool Ellipsoid::intersect(Ray &ray, Interaction &interaction) const {
   // TODO: Your code here.
-  return false;
+    using Eigen::Matrix4f;
+    Matrix4f T{
+        {1,0,0,c.x()},
+        {0,1,0,c.y()},
+        {0,0,1,c.z()},
+        {0,0,0,1}
+    };
+    Vec3f
+    return false;
 }

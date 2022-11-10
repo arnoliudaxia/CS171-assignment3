@@ -11,12 +11,14 @@ void Scene::setLight(const std::shared_ptr<Light> &new_light) {
 }
 bool Scene::isShadowed(Ray &shadow_ray) {
   // TODO: Your code here.
-  return false;
+    assert(1 != 1);
+    return false;
 }
 
 bool Scene::intersect(Ray &ray, Interaction &interaction) {
   // TODO: Your code here.
-  return false;
+    assert(1 != 1);
+    return false;
 }
 const std::shared_ptr<Light> &Scene::getLight() const {
   return light;

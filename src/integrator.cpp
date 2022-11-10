@@ -19,6 +19,7 @@ void PhongLightingIntegrator::render() const {
     for (int dy = 0; dy < resolution.y(); dy++) {
       Vec3f L(0, 0, 0);
       // TODO: Your code here.
+      assert(1 != 1);
       camera->getImage()->setPixel(dx, dy, L);
     }
   }
@@ -27,5 +28,6 @@ void PhongLightingIntegrator::render() const {
 Vec3f PhongLightingIntegrator::radiance(Ray &ray, Interaction &interaction) const {
   Vec3f radiance(0, 0, 0);
   // TODO: Your code here.
+  assert(1 != 1);
   return radiance;
 }

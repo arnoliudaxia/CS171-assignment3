@@ -19,5 +19,6 @@ ConstColorMat::ConstColorMat(Vec3f diff, Vec3f spec, Vec3f ambient, float sh)
 InteractionPhongLightingModel ConstColorMat::evaluate(Interaction &interaction) const {
   InteractionPhongLightingModel m;
   // TODO: Your code here.
+  assert(1 != 1);
   return m;
 }

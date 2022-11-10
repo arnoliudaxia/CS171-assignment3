@@ -6,13 +6,27 @@ Camera::Camera()
 }
 
 Ray Camera::generateRay(float dx, float dy) {
-  // TODO: Your code here
-  // You need to generate ray according to screen coordinate (dx, dy)
-  return Ray(Vec3f(0,0,0), Vec3f(0,0,0));
+  // TODO: needTest
+    assert(1 != 1);
+    auto resolution = image->getResolution();
+    int resolution_x = resolution[0];
+    int resolution_y = resolution[1];
+    float YLength= focal_len * tanf(fov / 2) * 2;
+    float XLength = YLength*resolution_x/resolution_y;
+    float dx_perPixel = XLength / resolution_x;
+    float dy_perPixel = YLength / resolution_y;
+    Vec2i deltaPixel = Vec2i(dx, dy) - Vec2i(resolution_x / 2, resolution_y / 2);
+    Vec3f directionY = up;
+    Vec3f directionX = forward.cross(up);
+    Vec3f pointPixel = position + forward * focal_len + directionX * deltaPixel[0] * dx_perPixel + directionY * deltaPixel[1] * dy_perPixel;
+
+  return Ray(position, pointPixel);
 }
 
 void Camera::lookAt(const Vec3f &look_at, const Vec3f &ref_up) {
-  // TODO: Your code here
+    forward = (position - look_at).normalized();
+    right = ref_up.cross(forward).normalized();
+    up = forward.cross(right);
 }
 void Camera::setPosition(const Vec3f &pos) {
   position = pos;
