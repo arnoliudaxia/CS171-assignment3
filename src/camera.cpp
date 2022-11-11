@@ -6,27 +6,24 @@ Camera::Camera()
 }
 
 Ray Camera::generateRay(float dx, float dy) {
-  // TODO: needTest
-    assert(1 != 1);
     auto resolution = image->getResolution();
     int resolution_x = resolution[0];
     int resolution_y = resolution[1];
-    float YLength= focal_len * tanf(fov / 2) * 2;
+    float YLength= focal_len * tanf(fov/180.0*PI / 2) * 2;
     float XLength = YLength*resolution_x/resolution_y;
     float dx_perPixel = XLength / resolution_x;
     float dy_perPixel = YLength / resolution_y;
-    Vec2i deltaPixel = Vec2i(dx, dy) - Vec2i(resolution_x / 2, resolution_y / 2);
-    Vec3f directionY = up;
-    Vec3f directionX = forward.cross(up);
-    Vec3f pointPixel = position + forward * focal_len + directionX * deltaPixel[0] * dx_perPixel + directionY * deltaPixel[1] * dy_perPixel;
+    Vec2i deltaPixel =  Vec2i(resolution_x / 2, resolution_y / 2)-Vec2i(dx, dy);
+    Vec3f image_plane_center=position + forward;
+    Vec3f pointPixel = image_plane_center  * focal_len + right * deltaPixel[0] * dx_perPixel - up * deltaPixel[1] * dy_perPixel;
 
-  return Ray(position, pointPixel);
+  return Ray(position, (pointPixel-position).normalized());
 }
 
 void Camera::lookAt(const Vec3f &look_at, const Vec3f &ref_up) {
-    forward = (position - look_at).normalized();
+    forward=(look_at-position).normalized();
     right = ref_up.cross(forward).normalized();
-    up = forward.cross(right);
+    up = ref_up;
 }
 void Camera::setPosition(const Vec3f &pos) {
   position = pos;
