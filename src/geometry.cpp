@@ -8,21 +8,43 @@ Triangle::Triangle(Vec3f v0, Vec3f v1, Vec3f v2)
 }
 
 bool Triangle::intersect(Ray &ray, Interaction &interaction) const {
-  // TODO: Your code here.
-    assert(1 != 1);
-  return false;
+    float t = ((v0 - ray.origin).dot(normal)) / (ray.direction.dot(normal));
+    if (t < 0) {
+        return false;
+    }
+    Vec3f interactionPoint = ray.origin + t * ray.direction;
+    Vec3f 交顶连线1 = v0 - interactionPoint;
+    Vec3f 交顶连线2 = v1 - interactionPoint;
+    Vec3f 交顶连线3 = v2 - interactionPoint;
+    float 方法叉积1 = 交顶连线1.cross(交顶连线2).dot(normal);
+    float 方法叉积2 = 交顶连线2.cross(交顶连线3).dot(normal);
+    float 方法叉积3 = 交顶连线3.cross(交顶连线1).dot(normal);
+    if ((方法叉积1 * 方法叉积2 < 0) || (方法叉积2 * 方法叉积3 < 0) || (方法叉积1 * 方法叉积3 < 0)) {
+        //点不在三角形里面
+        return false;
+    }
+    interaction.type = Interaction::GEOMETRY;
+    interaction.pos = interactionPoint;
+    //TODO uv here
+//    interaction.normal
+    interaction.normal = normal;
+    interaction.dist = t;
+    if (material != nullptr) {
+        interaction.model = material->evaluate(interaction);
+    }
+    return true;
 }
 
 Rectangle::Rectangle(Vec3f position, Vec2f dimension, Vec3f normal, Vec3f tangent)
-    : Geometry(),
+        : Geometry(),
       position(std::move(position)),
       size(std::move(dimension)),
       normal(std::move(normal)),
       tangent(std::move(tangent)) {}
 
 bool Rectangle::intersect(Ray &ray, Interaction &interaction) const {
-  // TODO: ��Ҫ����
-    //ray�ϵĵ�����ĵ����ߺͷ��ߵ��Ϊ0
+  // TODO: ��Ҫ����
+    //ray�ϵĵ�����ĵ����ߺͷ��ߵ��Ϊ0
     float t = (normal.dot(position - ray.origin)) / (ray.direction.dot(normal));
     if (t < 0) {
         return false;
