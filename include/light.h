@@ -20,6 +20,7 @@ class Light {
   virtual bool intersect(Ray &ray, Interaction &interaction) const = 0;
 
   [[nodiscard]] Vec3f getColor() const;
+  Vec3f getPosition() const;
  protected:
   /// position of light in world space
   Vec3f position;

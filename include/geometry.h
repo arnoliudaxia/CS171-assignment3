@@ -32,6 +32,7 @@ class Rectangle : public Geometry {
   [[nodiscard]] Vec2f getSize() const;
   [[nodiscard]] Vec3f getNormal() const;
   [[nodiscard]] Vec3f getTangent() const;
+  Vec3f getPosition() const;
  protected:
   Vec3f position;
   Vec2f size;
@@ -44,8 +45,7 @@ class Ellipsoid : public Geometry {
   Ellipsoid(const Vec3f &p, const Vec3f &a, const Vec3f &b, const Vec3f &c);
   bool intersect(Ray &ray, Interaction &interaction) const override;
  protected:
-  Vec3f p;//中心点
-  //下面是三个轴的半轴长
+  Vec3f p;
   Vec3f a;
   Vec3f b;
   Vec3f c;
