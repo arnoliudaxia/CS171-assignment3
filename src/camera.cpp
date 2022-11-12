@@ -9,6 +9,10 @@ Ray Camera::generateRay(float dx, float dy) {
     auto resolution = image->getResolution();
     int resolution_x = resolution[0];
     int resolution_y = resolution[1];
+    dx=fmax(0,dx);
+    dy=fmax(0,dy);
+    dx=fmin(dx,resolution_x);
+    dy=fmin(dy,resolution_y);
     float YLength= focal_len * tanf(fov/180.0*PI / 2) * 2;
     float XLength = YLength*resolution_x/resolution_y;
     float dx_perPixel = XLength / resolution_x;

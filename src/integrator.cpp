@@ -21,9 +21,25 @@ void PhongLightingIntegrator::render() const {
             Ray ray = camera->generateRay(dx, dy);
             Interaction interaction;
             if (scene->intersect(ray, interaction)) {
-                L = radiance(ray, interaction);
+                L += radiance(ray, interaction)*4;
             }
-            camera->getImage()->setPixel(dx, dy, L);
+            ray = camera->generateRay(dx-.25, dy-.25);
+            if (scene->intersect(ray, interaction)) {
+                L += radiance(ray, interaction);
+            }
+            ray = camera->generateRay(dx-.25, dy+.25);
+            if (scene->intersect(ray, interaction)) {
+                L += radiance(ray, interaction);
+            }
+            ray = camera->generateRay(dx+.25, dy-.25);
+            if (scene->intersect(ray, interaction)) {
+                L += radiance(ray, interaction);
+            }
+            ray = camera->generateRay(dx+.25, dy+.25);
+            if (scene->intersect(ray, interaction)) {
+                L += radiance(ray, interaction);
+            }
+            camera->getImage()->setPixel(dx, dy, L/8);
         }
     }
 }

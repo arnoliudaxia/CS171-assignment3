@@ -42,7 +42,6 @@ Rectangle::Rectangle(Vec3f position, Vec2f dimension, Vec3f normal, Vec3f tangen
           tangent(std::move(tangent)) {}
 
 bool Rectangle::intersect(Ray &ray, Interaction &interaction) const {
-    // TODO: Rectangle::intersect
     //ray上的点和中心的连线和法线点积为0
     float t = (normal.dot(position - ray.origin)) / (ray.direction.dot(normal));
     if (t < 0) {
@@ -88,7 +87,6 @@ Ellipsoid::Ellipsoid(const Vec3f &p, const Vec3f &a, const Vec3f &b, const Vec3f
         : p(p), a(a), b(b), c(c) {}
 
 bool Ellipsoid::intersect(Ray &ray, Interaction &interaction) const {
-    // TODO:  Ellipsoid::intersect.
     using Eigen::Matrix4f;
     float a_length = a.norm();
     float b_length = b.norm();
