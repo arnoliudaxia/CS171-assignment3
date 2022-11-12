@@ -11,9 +11,9 @@ PhongLightingIntegrator::PhongLightingIntegrator(std::shared_ptr<Camera> cam,
 void PhongLightingIntegrator::render() const {
     Vec2i resolution = camera->getImage()->getResolution();
     int cnt = 0;
-//#pragma omp parallel for schedule(guided, 2), shared(cnt)
+#pragma omp parallel for schedule(guided, 2), shared(cnt)
     for (int dx = 0; dx < resolution.x(); dx++) {
-//#pragma omp atomic
+#pragma omp atomic
         ++cnt;
         printf("\r%.02f%%", cnt * 100.0 / resolution.x());
         for (int dy = 0; dy < resolution.y(); dy++) {
@@ -29,14 +29,13 @@ void PhongLightingIntegrator::render() const {
 }
 
 Vec3f PhongLightingIntegrator::radiance(Ray &ray, Interaction &interaction) const {
-    //TODO: Phong
     auto light = scene->getLight();
     auto lightColor = light->getColor();
     if (interaction.type == Interaction::LIGHT) {
         return lightColor;
     }
     //先获取ambient
-    Vec3f ambient = interaction.model.ambient;
+    Vec3f ambient = (scene->getAmbient()).cwiseProduct(interaction.model.diffusion);
     //算diffuse
     auto lightSamples = scene->getLight()->samples();
     Vec3f diff(0,0,0);
@@ -47,7 +46,7 @@ Vec3f PhongLightingIntegrator::radiance(Ray &ray, Interaction &interaction) cons
         ,RAY_DEFAULT_MIN,点到光点.norm());
         if (!scene->isShadowed(shadow_ray)) {
             //计算Diffuse
-            Vec3f lightDir = (light->getPosition() - interaction.pos).normalized();
+            Vec3f lightDir = (sample.position - interaction.pos).normalized();
             float diff_weight = fmax(interaction.normal.dot(lightDir), 0.0);
             diff += diff_weight*interaction.model.diffusion;
             //计算Specular
@@ -56,7 +55,7 @@ Vec3f PhongLightingIntegrator::radiance(Ray &ray, Interaction &interaction) cons
             float costheta=lightDir.dot(interaction.normal)/(lightDir.norm()*interaction.normal.norm());
             Vec3f lp=interaction.pos+lightDir.normalized()*1/costheta;
             Vec3f rp=2*cp-lp;
-            Vec3f reflectDir = rp-interaction.pos;
+            Vec3f reflectDir = (rp-interaction.pos).normalized();
             float spec_weight = pow(fmaxf(viewDir.dot(reflectDir), 0.0), interaction.model.shininess);
             spec += spec_weight*interaction.model.specular;
         }
@@ -64,6 +63,6 @@ Vec3f PhongLightingIntegrator::radiance(Ray &ray, Interaction &interaction) cons
     diff /= lightSamples.size();
     spec /= lightSamples.size();
 //    Vec3f lightDir = normalize( - FragPos);
-
-    return (ambient+diff).cwiseProduct(lightColor);
+    Vec3f result=(ambient+diff+spec).cwiseProduct(lightColor);
+    return result;
 }

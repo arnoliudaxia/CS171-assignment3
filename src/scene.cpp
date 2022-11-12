@@ -16,9 +16,9 @@ bool Scene::isShadowed(Ray &shadow_ray) {
     for (auto geo: geometries) {
         if(geo->intersect(shadow_ray, it))
         {
-            if(it.dist<shadow_ray.t_max)
+            if(it.dist>1e-4&&it.dist<shadow_ray.t_max)
             {
-                return false;
+                return true;
             }
         }
     }
