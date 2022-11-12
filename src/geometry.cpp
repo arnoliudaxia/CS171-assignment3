@@ -57,13 +57,13 @@ bool Rectangle::intersect(Ray &ray, Interaction &interaction) const {
     if (sqrtf(delta.dot(delta) - touying * touying) > size[1] / 2) {
         return false;
     }
-    interaction.dist=t*ray.direction.norm();
+    interaction.dist = t * ray.direction.norm();
     if (material != nullptr) {
         interaction.model = material->evaluate(interaction);
     }
-    interaction.pos=intersectPoint;
-    interaction.normal=normal;
-    interaction.type=Interaction::GEOMETRY;
+    interaction.pos = intersectPoint;
+    interaction.normal = normal;
+    interaction.type = Interaction::GEOMETRY;
     //TODO texture uv
     return true;
 }
@@ -89,15 +89,14 @@ Ellipsoid::Ellipsoid(const Vec3f &p, const Vec3f &a, const Vec3f &b, const Vec3f
 
 bool Ellipsoid::intersect(Ray &ray, Interaction &interaction) const {
     // TODO:  Ellipsoid::intersect.
-    return false;
     using Eigen::Matrix4f;
     float a_length = a.norm();
     float b_length = b.norm();
     float c_length = c.norm();
     Matrix4f T{
-            {1, 0, 0, c.x()},
-            {0, 1, 0, c.y()},
-            {0, 0, 1, c.z()},
+            {1, 0, 0, p.x()},
+            {0, 1, 0, p.y()},
+            {0, 0, 1, p.z()},
             {0, 0, 0, 1}
     };
     Matrix4f R{
@@ -123,24 +122,26 @@ bool Ellipsoid::intersect(Ray &ray, Interaction &interaction) const {
         return false;
     ////确认ray和单位圆相交
     float tv = sqrt(1 - 投影);
-    float t_center=-(圆心投影/ray_direction.norm());
+    float t_center = -(圆心投影 / ray_direction.norm());
     float t_enter = t_center - tv;
     float t_exit = t_center + tv;
     if (t_enter > ray.t_min && t_exit < ray.t_max) {
-        interaction.type = Interaction::GEOMETRY;
         //// initialize vec4
         Vec3f 变换碰撞点 = (ray_origin + t_enter * ray_direction);
         interaction.pos = (M * Vec4f(变换碰撞点.x(), 变换碰撞点.y(), 变换碰撞点.z(), 1)).head<3>();
         interaction.dist = t_enter;
         interaction.normal = (M * Vec4f(变换碰撞点.x(), 变换碰撞点.y(), 变换碰撞点.z(), 0)).head<3>().normalized();
+        interaction.type=Interaction::GEOMETRY;
 
-        float theta = acosf(变换碰撞点.y());
-        float phi = abs(atan2f(变换碰撞点.z(), 变换碰撞点.x()));
-        interaction.uv[0] = phi;
-        interaction.uv[1] = theta;
+//TODO 为什么加了UV会错
+        //        float theta = acosf(变换碰撞点.y());
+//        float phi = abs(atan2f(变换碰撞点.z(), 变换碰撞点.x()));
+//        interaction.uv[0] = phi;
+//        interaction.uv[1] = theta;
         if (material != nullptr) {
             interaction.model = material->evaluate(interaction);
         }
+
         return true;
     }
     return false;
