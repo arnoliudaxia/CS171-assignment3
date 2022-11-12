@@ -25,10 +25,12 @@ std::vector<LightSample> SquareAreaLight::samples() const {
     std::vector<LightSample> samples;
     const int SAMPLES = 8; //请确保这是个偶数
     Vec2f step=rectangle.getSize()/SAMPLES;
+    Vec3f right = rectangle.getTangent();
+    Vec3f up = right.cross(rectangle.getNormal());
     for (int i = 0; i < SAMPLES; i++) {
         for (int j = 0; j < SAMPLES; j++) {
-            Vec3f pos = position + (i-SAMPLES/2) * step(0) * rectangle.getTangent() +
-                    (j-SAMPLES/2) * step(1)* rectangle.getNormal();
+            Vec3f pos = position + (i - SAMPLES / 2) * step(0) * right +
+                        (j - SAMPLES / 2) * step(1) * up;
             LightSample ls;
             ls.position = pos;
             ls.color = color;
@@ -40,9 +42,8 @@ std::vector<LightSample> SquareAreaLight::samples() const {
 }
 
 bool SquareAreaLight::intersect(Ray &ray, Interaction &interaction) const {
-    if(rectangle.intersect(ray,interaction))
-    {
-        interaction.type=Interaction::LIGHT;
+    if (rectangle.intersect(ray, interaction)) {
+        interaction.type = Interaction::LIGHT;
         return true;
     }
     return false;
