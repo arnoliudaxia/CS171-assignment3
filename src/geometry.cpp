@@ -62,7 +62,6 @@ bool Rectangle::intersect(Ray &ray, Interaction &interaction) const {
     interaction.pos = intersectPoint;
     interaction.normal = normal;
     interaction.type = Interaction::GEOMETRY;
-    //TODO texture uv
     float u=(intersectPoint-position).dot(tangent)/size(0)+0.5;
     float v=(intersectPoint-position).dot(normal.cross(tangent))/size(1)+0.5;
     interaction.uv=Vec2f(u,v);
@@ -138,12 +137,11 @@ bool Ellipsoid::intersect(Ray &ray, Interaction &interaction) const {
         interaction.normal = (M * Vec4f(transformed_point.x(), transformed_point.y(), transformed_point.z(),
                                         0)).head<3>().normalized();
         interaction.type = Interaction::GEOMETRY;
-
-//TODO 为什么加了UV会错
-        //        float theta = acosf(变换碰撞点.y());
-//        float phi = abs(atan2f(变换碰撞点.z(), 变换碰撞点.x()));
-//        interaction.uv[0] = phi;
-//        interaction.uv[1] = theta;
+        
+        float theta = acosf(transformed_point.y())/PI;
+        float phi = abs(atan2f(transformed_point.z(), transformed_point.x()))/PI;
+        interaction.uv[0] = phi;
+        interaction.uv[1] = theta;
         if (material != nullptr) {
             interaction.model = material->evaluate(interaction);
         }

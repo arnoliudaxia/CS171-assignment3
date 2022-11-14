@@ -12,9 +12,9 @@ void setSceneById(std::shared_ptr<Scene> &scene, int id);
 
 int main(int argc, char *argv[]) {
 #ifndef TESTBYGITHUB                    // PLEASE DO NOT CHANGE
-//  Vec2i img_resolution(400, 400);
+  Vec2i img_resolution(400, 400);
 //  Vec2i img_resolution(32, 32);
-  Vec2i img_resolution(60, 60);
+//  Vec2i img_resolution(60, 60);
 #else                                   // PLEASE DO NOT CHANGE
     Vec2i img_resolution(32, 32);     // PLEASE DO NOT CHANGE
 #endif                                  // PLEASE DO NOT CHANGE
@@ -32,7 +32,8 @@ int main(int argc, char *argv[]) {
   camera->setImage(rendered_img);
   // construct scene.
   std::shared_ptr<Scene> scene = std::make_shared<Scene>();
-  setSceneById(scene, scene_id);
+//  setSceneById(scene, scene_id);
+  setSceneById(scene, 1);
 
   std::unique_ptr<PhongLightingIntegrator> integrator
       = std::make_unique<PhongLightingIntegrator>(camera, scene);
@@ -78,6 +79,10 @@ void setSceneById(std::shared_ptr<Scene> &scene, int id) {
       mat_blue =
       std::make_shared<ConstColorMat>(Vec3f(0.2, 0.5, 0.9));
 
+    std::shared_ptr<Material>
+            mat_grid =
+    std::make_shared<TextureMat>("..\\textures\\grid.png");
+
   std::shared_ptr<Geometry>
       floor = std::make_shared<Rectangle>(Vec3f(0, 0, 0), Vec2f(2, 2), Vec3f(0, 0, 1), Vec3f(1, 0, 0));
   std::shared_ptr<Geometry>
@@ -118,8 +123,25 @@ void setSceneById(std::shared_ptr<Scene> &scene, int id) {
       break;
     }
     case 1:
-      UNIMPLEMENTED
-      // You can add your custom scene here.
+        floor->setMaterial(mat_grid);
+          ceiling->setMaterial(mat_white);
+          wall_back->setMaterial(mat_white);
+          wall_left->setMaterial(mat_red);
+          wall_right->setMaterial(mat_green);
+          scene->addGeometry(floor);
+          scene->addGeometry(ceiling);
+          scene->addGeometry(wall_left);
+          scene->addGeometry(wall_right);
+          scene->addGeometry(wall_back);
+          addEllipsoidToScene(scene,
+                              mat_grid,
+                              Vec3f(0.5, 0.4, 0.4),
+                              Vec3f(0.3, 0.1, 0),
+                              Vec3f(-0.1, 0.3, 0),
+                              Vec3f(0, 0, 0.4));
+          scene->setLight(square_light);
+          scene->setAmbient(Vec3f(0.1, 0.1, 0.1));
+          break;
     default:break;
   }
 

@@ -47,8 +47,8 @@ TextureMat::TextureMat(std::string texturepath) {
 InteractionPhongLightingModel TextureMat::evaluate(Interaction &interaction) const {
     //use u,v to render it
     //TODO 现在使用了nearest插值，可以考虑双线性插值
-    int u = round(interaction.uv(0) * texture_width);
-    int v = round(interaction.uv(1) * texture_width);
+    int u = round(interaction.uv(0) * (texture_width-1));
+    int v = round(interaction.uv(1) * (texture_height-1));
     auto textureColor = rgbs[v][u];
     Vec3f color(textureColor.R,textureColor.G,textureColor.B);
     InteractionPhongLightingModel m;
