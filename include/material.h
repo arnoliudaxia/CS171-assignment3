@@ -24,7 +24,14 @@ class ConstColorMat : public Material {
 };
 
 class TextureMat : public Material {
- // TODO: Bonus - texture material
+public:
+    TextureMat()= default;
+    explicit TextureMat(std::string texturepath);
+    [[nodiscard]] InteractionPhongLightingModel evaluate(Interaction &interaction) const override;
+private:
+    //对于u,v上的点是rbgs[v][u]
+    std::vector<std::vector<Vec3f>> rgbs;
+    int texture_width;
+    int texture_height;
 };
-
 #endif //CS171_HW3_INCLUDE_MATERIAL_H_
