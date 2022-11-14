@@ -13,13 +13,13 @@ bool Triangle::intersect(Ray &ray, Interaction &interaction) const {
         return false;
     }
     Vec3f interactionPoint = ray.origin + t * ray.direction;
-    Vec3f 交顶连线1 = v0 - interactionPoint;
-    Vec3f 交顶连线2 = v1 - interactionPoint;
-    Vec3f 交顶连线3 = v2 - interactionPoint;
-    float 方法叉积1 = 交顶连线1.cross(交顶连线2).dot(normal);
-    float 方法叉积2 = 交顶连线2.cross(交顶连线3).dot(normal);
-    float 方法叉积3 = 交顶连线3.cross(交顶连线1).dot(normal);
-    if ((方法叉积1 * 方法叉积2 < 0) || (方法叉积2 * 方法叉积3 < 0) || (方法叉积1 * 方法叉积3 < 0)) {
+    Vec3f ivline1 = v0 - interactionPoint;
+    Vec3f ivline2 = v1 - interactionPoint;
+    Vec3f ivline3 = v2 - interactionPoint;
+    float method_cross1 = ivline1.cross(ivline2).dot(normal);
+    float method_cross2 = ivline2.cross(ivline3).dot(normal);
+    float method_cross3 = ivline3.cross(ivline1).dot(normal);
+    if ((method_cross1 * method_cross2 < 0) || (method_cross2 * method_cross3 < 0) || (method_cross1 * method_cross3 < 0)) {
         //点不在三角形里面
         return false;
     }

@@ -57,9 +57,9 @@ Vec3f PhongLightingIntegrator::radiance(Ray &ray, Interaction &interaction) cons
     Vec3f diff(0,0,0);
     Vec3f spec(0,0,0);
     for (LightSample sample: lightSamples) {
-        Vec3f 点到光点=sample.position - interaction.pos;
-        Ray shadow_ray(interaction.pos, (点到光点).normalized()
-        ,RAY_DEFAULT_MIN,点到光点.norm());
+        Vec3f p2l= sample.position - interaction.pos;
+        Ray shadow_ray(interaction.pos, (p2l).normalized()
+        , RAY_DEFAULT_MIN, p2l.norm());
         if (!scene->isShadowed(shadow_ray)) {
             //计算Diffuse
             Vec3f lightDir = (sample.position - interaction.pos).normalized();
@@ -79,6 +79,6 @@ Vec3f PhongLightingIntegrator::radiance(Ray &ray, Interaction &interaction) cons
     diff /= lightSamples.size();
     spec /= lightSamples.size();
 //    Vec3f lightDir = normalize( - FragPos);
-    Vec3f result=(ambient+diff+spec).cwiseProduct(lightColor);
+    Vec3f result=(ambient+spec).cwiseProduct(lightColor);
     return result;
 }
