@@ -12,9 +12,9 @@ void setSceneById(std::shared_ptr<Scene> &scene, int id);
 
 int main(int argc, char *argv[]) {
 #ifndef TESTBYGITHUB                    // PLEASE DO NOT CHANGE
-//  Vec2i img_resolution(200, 200);
-  Vec2i img_resolution(32, 32);
-//  Vec2i img_resolution(60, 60);
+//  Vec2i img_resolution(400, 400);
+//  Vec2i img_resolution(32, 32);
+  Vec2i img_resolution(60, 60);
 #else                                   // PLEASE DO NOT CHANGE
     Vec2i img_resolution(32, 32);     // PLEASE DO NOT CHANGE
 #endif                                  // PLEASE DO NOT CHANGE
