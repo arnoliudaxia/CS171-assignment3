@@ -114,23 +114,23 @@ bool Ellipsoid::intersect(Ray &ray, Interaction &interaction) const {
     Vec3f ray_origin = (M_inverse * Vec4f(ray.origin.x(), ray.origin.y(), ray.origin.z(), 1)).head<3>();
     Vec3f ray_direction = (M_inverse * Vec4f(ray.direction.x(), ray.direction.y(), ray.direction.z(), 0)).head<3>();
 
-    float 圆心投影 = ray_origin.dot(ray_direction.normalized());
-    float 投影 = (ray_origin.dot(ray_origin) - 圆心投影 * 圆心投影);
-    if (投影 > 1)
+    float circle_center_projection = ray_origin.dot(ray_direction.normalized());
+    float projection = (ray_origin.dot(ray_origin) - circle_center_projection * circle_center_projection);
+    if (projection > 1)
         return false;
     ////确认ray和单位圆相交
-    float tv = sqrt(1 - 投影) / ray_direction.norm();
-    float t_center = -(圆心投影 / ray_direction.norm());
+    float tv = sqrt(1 - projection) / ray_direction.norm();
+    float t_center = -(circle_center_projection / ray_direction.norm());
     float t_enter = t_center - tv;
     float t_exit = t_center + tv;
     if (t_enter > 1e-4 || t_exit < ray.t_max) {
         t_enter = t_enter < 1e-4 ? 0 : t_enter;
         t_enter=t_enter==0?t_exit:t_enter;
         //// initialize vec4
-        Vec3f 变换碰撞点 = (ray_origin + t_enter * ray_direction);
-        interaction.pos = (M * Vec4f(变换碰撞点.x(), 变换碰撞点.y(), 变换碰撞点.z(), 1)).head<3>();
+        Vec3f transformed_point = (ray_origin + t_enter * ray_direction);
+        interaction.pos = (M * Vec4f(transformed_point.x(), transformed_point.y(), transformed_point.z(), 1)).head<3>();
         interaction.dist = t_enter;
-        interaction.normal = (M * Vec4f(变换碰撞点.x(), 变换碰撞点.y(), 变换碰撞点.z(), 0)).head<3>().normalized();
+        interaction.normal = (M * Vec4f(transformed_point.x(), transformed_point.y(), transformed_point.z(), 0)).head<3>().normalized();
         interaction.type = Interaction::GEOMETRY;
 
 //TODO 为什么加了UV会错
