@@ -19,7 +19,8 @@ bool Triangle::intersect(Ray &ray, Interaction &interaction) const {
     float method_cross1 = ivline1.cross(ivline2).dot(normal);
     float method_cross2 = ivline2.cross(ivline3).dot(normal);
     float method_cross3 = ivline3.cross(ivline1).dot(normal);
-    if ((method_cross1 * method_cross2 < 0) || (method_cross2 * method_cross3 < 0) || (method_cross1 * method_cross3 < 0)) {
+    if ((method_cross1 * method_cross2 < 0) || (method_cross2 * method_cross3 < 0) ||
+        (method_cross1 * method_cross3 < 0)) {
         //点不在三角形里面
         return false;
     }
@@ -57,13 +58,17 @@ bool Rectangle::intersect(Ray &ray, Interaction &interaction) const {
         return false;
     }
     interaction.dist = t * ray.direction.norm();
-    if (material != nullptr) {
-        interaction.model = material->evaluate(interaction);
-    }
+
     interaction.pos = intersectPoint;
     interaction.normal = normal;
     interaction.type = Interaction::GEOMETRY;
     //TODO texture uv
+    float u=(intersectPoint-position).dot(tangent)/size(0)+0.5;
+    float v=(intersectPoint-position).dot(normal.cross(tangent))/size(1)+0.5;
+    interaction.uv=Vec2f(u,v);
+    if (material != nullptr) {
+        interaction.model = material->evaluate(interaction);
+    }
     return true;
 }
 
@@ -125,12 +130,13 @@ bool Ellipsoid::intersect(Ray &ray, Interaction &interaction) const {
     float t_exit = t_center + tv;
     if (t_enter > 1e-4 || t_exit < ray.t_max) {
         t_enter = t_enter < 1e-4 ? 0 : t_enter;
-        t_enter=t_enter==0?t_exit:t_enter;
+        t_enter = t_enter == 0 ? t_exit : t_enter;
         //// initialize vec4
         Vec3f transformed_point = (ray_origin + t_enter * ray_direction);
         interaction.pos = (M * Vec4f(transformed_point.x(), transformed_point.y(), transformed_point.z(), 1)).head<3>();
         interaction.dist = t_enter;
-        interaction.normal = (M * Vec4f(transformed_point.x(), transformed_point.y(), transformed_point.z(), 0)).head<3>().normalized();
+        interaction.normal = (M * Vec4f(transformed_point.x(), transformed_point.y(), transformed_point.z(),
+                                        0)).head<3>().normalized();
         interaction.type = Interaction::GEOMETRY;
 
 //TODO 为什么加了UV会错

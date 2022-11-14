@@ -25,12 +25,18 @@ class ConstColorMat : public Material {
 
 class TextureMat : public Material {
 public:
+    class RGBColor{
+    public:
+        float R;
+        float G;
+        float B;
+    };
     TextureMat()= default;
     explicit TextureMat(std::string texturepath);
     [[nodiscard]] InteractionPhongLightingModel evaluate(Interaction &interaction) const override;
 private:
     //对于u,v上的点是rbgs[v][u]
-    std::vector<std::vector<Vec3f>> rgbs;
+    std::vector<std::vector<RGBColor>> rgbs;
     int texture_width;
     int texture_height;
 };

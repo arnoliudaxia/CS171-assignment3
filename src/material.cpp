@@ -30,14 +30,15 @@ TextureMat::TextureMat(std::string texturepath) {
     unsigned char *raw_data = stbi_load(texturepath.c_str(), &w, &h, &n, 0);
     texture_width = w;
     texture_height = h;
-    Vec3f rgb(0, 0, 0);
     int pixelCount = 0;
     for (int H = 0; H < h; ++H) {
+        rgbs.emplace_back(w);
         for (int W = 0; W < w; ++W) {
-            rgb(0) = (float) raw_data[pixelCount++] / 255.0f;
-            rgb(1) = (float) raw_data[pixelCount++] / 255.0f;
-            rgb(2) = (float) raw_data[pixelCount++] / 255.0f;
-            rgbs[h].push_back(rgb);
+            RGBColor rgbColor;
+            rgbColor.R = (float) raw_data[pixelCount++] / 255.0f;
+            rgbColor.G = (float) raw_data[pixelCount++] / 255.0f;
+            rgbColor.B = (float) raw_data[pixelCount++] / 255.0f;
+            rgbs[H][W]=rgbColor;
         }
     }
     stbi_image_free(raw_data);
@@ -47,11 +48,12 @@ InteractionPhongLightingModel TextureMat::evaluate(Interaction &interaction) con
     //use u,v to render it
     //TODO 现在使用了nearest插值，可以考虑双线性插值
     int u = round(interaction.uv(0) * texture_width);
-    int v = round(interaction.uv(0) * texture_width);
-    Vec3f textureColor = rgbs[v][u];
+    int v = round(interaction.uv(1) * texture_width);
+    auto textureColor = rgbs[v][u];
+    Vec3f color(textureColor.R,textureColor.G,textureColor.B);
     InteractionPhongLightingModel m;
-    m.diffusion = textureColor;
-    m.specular = textureColor;
+    m.diffusion = color;
+    m.specular = color;
     m.shininess = 32;
     return m;
 }
