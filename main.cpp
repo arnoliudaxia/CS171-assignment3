@@ -16,10 +16,10 @@ void setSceneById(std::shared_ptr<Scene> &scene, int id);
 std::shared_ptr<Camera> camera = std::make_shared<Camera>();
 int main(int argc, char *argv[]) {
 #ifndef TESTBYGITHUB                    // PLEASE DO NOT CHANGE
-//    Vec2i img_resolution(400, 400);
+    Vec2i img_resolution(400, 400);
 //  Vec2i img_resolution(32, 32);
 //  Vec2i img_resolution(60, 60);
-  Vec2i img_resolution(200, 200);
+//  Vec2i img_resolution(200, 200);
 #else                                   // PLEASE DO NOT CHANGE
     Vec2i img_resolution(32, 32);     // PLEASE DO NOT CHANGE
 #endif                                  // PLEASE DO NOT CHANGE
@@ -103,6 +103,8 @@ void setSceneById(std::shared_ptr<Scene> &scene, int id) {
     std::shared_ptr<Geometry>
             floor3 = std::make_shared<Rectangle>(Vec3f(0, 30, 0), Vec2f(5, 20), Vec3f(0, 0, 1), Vec3f(1, 0, 0));
     std::shared_ptr<Geometry>
+            floor4 = std::make_shared<Rectangle>(Vec3f(0, 80, 0), Vec2f(5, 100), Vec3f(0, 0, 1), Vec3f(1, 0, 0));
+    std::shared_ptr<Geometry>
             ceiling = std::make_shared<Rectangle>(Vec3f(0, 0, 2), Vec2f(2, 2), Vec3f(0, 0, -1), Vec3f(1, 0, 0));
     std::shared_ptr<Geometry>
             wall_left = std::make_shared<Rectangle>(Vec3f(-1, 0, 1), Vec2f(2, 2), Vec3f(1, 0, 0), Vec3f(0, 0, 1));
@@ -143,6 +145,12 @@ void setSceneById(std::shared_ptr<Scene> &scene, int id) {
             floor->setMaterial(mat_grid_mipmap);
             floor2->setMaterial(mat_grid_mipmap);
             floor3->setMaterial(mat_grid_mipmap);
+            floor4->setMaterial(mat_grid_mipmap);
+//            floor->setMaterial(mat_grid);
+//            floor2->setMaterial(mat_grid);
+//            floor3->setMaterial(mat_grid);
+//            floor4->setMaterial(mat_grid);
+
 //          ceiling->setMaterial(mat_white);
 //          wall_back->setMaterial(mat_block);
 //          wall_left->setMaterial(mat_red);
@@ -150,6 +158,7 @@ void setSceneById(std::shared_ptr<Scene> &scene, int id) {
             scene->addGeometry(floor);
             scene->addGeometry(floor2);
             scene->addGeometry(floor3);
+            scene->addGeometry(floor4);
 //          scene->addGeometry(ceiling);
 //          scene->addGeometry(wall_left);
 //          scene->addGeometry(wall_right);

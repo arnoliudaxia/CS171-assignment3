@@ -99,10 +99,11 @@ MipMapTextureMat::MipMapTextureMat(std::string texturepath) : TextureMat(texture
         std::vector<std::vector<RGBColor>> levelrgbs;
         int levelWidth=mipmap[i-1].size();
         levelWidth=levelWidth-levelWidth%2;
-        for (int y = 0; y < levelWidth; ++++y) {
+        for (int y = 0; y < levelWidth-1; ++++y) {
         levelrgbs.emplace_back(levelWidth/2);
-            for (int x = 0; x < levelWidth; ++++x) {
+            for (int x = 0; x < levelWidth-1; ++++x) {
                 levelrgbs[y/2][x/2]=(mipmap[i-1][y][x]+mipmap[i-1][y][x+1]+mipmap[i-1][y+1][x]+mipmap[i-1][y+1][x+1])/4;
+//                levelrgbs[y/2][x/2]=(mipmap[i-1][y][x]);
             }
         }
         mipmap.push_back(std::move(levelrgbs));
@@ -111,28 +112,26 @@ MipMapTextureMat::MipMapTextureMat(std::string texturepath) : TextureMat(texture
 }
 
 InteractionPhongLightingModel MipMapTextureMat::evaluate(Interaction &interaction) const {
-    auto phongmodel=TextureMat::evaluate(interaction);
+//    auto phongmodel=TextureMat::evaluate(interaction);
     //现在考虑取第几曾
-    float L=interaction.dudv*100-1;
+    float L=interaction.dudv*104;
 //    printf("%f.04\n",L);
     int D= (int)log2(L);
     if(D>mipmap.size()-1)
     {
         D=mipmap.size()-1;
     }
-    if(D==0)
-    {
-        phongmodel.diffusion=Vec3f (1,0,0);
-    }
-    if(D==1)
-    {
-        phongmodel.diffusion=Vec3f (0,1,0);
-    }
-    if(D>=2)
-    {
-        phongmodel.diffusion=Vec3f (0,0,1);
-    }
-    return phongmodel;
+
+    int u = round(interaction.uv(0) * (texture_width-1));
+    int v = round(interaction.uv(1) * (texture_height-1));
+    auto textureColor = mipmap[D][v/(pow(2,D))][u/(pow(2,D))];
+//    auto textureColor = mipmap[0][v/2][u/2];
+    Vec3f color(textureColor.R,textureColor.G,textureColor.B);
+    InteractionPhongLightingModel m;
+    m.diffusion = color;
+    m.specular = color;
+    m.shininess = 32;
+    return m;
 }
 
 TextureMat::RGBColor TextureMat::RGBColor::operator+(TextureMat::RGBColor other) const {
