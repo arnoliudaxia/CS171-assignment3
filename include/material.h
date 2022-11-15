@@ -37,7 +37,18 @@ public:
 private:
     //对于u,v上的点是rbgs[v][u]
     std::vector<std::vector<RGBColor>> rgbs;
+protected:
     int texture_width;
     int texture_height;
+};
+
+class MutliTextureMat : public TextureMat {
+public:
+    MutliTextureMat()= default;
+    explicit MutliTextureMat(std::string texturepath,std::string normalpath);
+    [[nodiscard]] InteractionPhongLightingModel evaluate(Interaction &interaction) const override;
+private:
+    std::vector<std::vector<RGBColor>> normals;
+
 };
 #endif //CS171_HW3_INCLUDE_MATERIAL_H_

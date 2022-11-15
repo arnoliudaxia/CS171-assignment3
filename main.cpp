@@ -15,6 +15,7 @@ int main(int argc, char *argv[]) {
   Vec2i img_resolution(400, 400);
 //  Vec2i img_resolution(32, 32);
 //  Vec2i img_resolution(60, 60);
+//  Vec2i img_resolution(100, 100);
 #else                                   // PLEASE DO NOT CHANGE
     Vec2i img_resolution(32, 32);     // PLEASE DO NOT CHANGE
 #endif                                  // PLEASE DO NOT CHANGE
@@ -32,8 +33,11 @@ int main(int argc, char *argv[]) {
   camera->setImage(rendered_img);
   // construct scene.
   std::shared_ptr<Scene> scene = std::make_shared<Scene>();
-//  setSceneById(scene, scene_id);
-  setSceneById(scene, 1);
+#ifndef TESTBYGITHUB                                    // PLEASE DO NOT CHANGE
+    setSceneById(scene, 1);
+#else                                                   // PLEASE DO NOT CHANGE
+      setSceneById(scene, scene_id);     // PLEASE DO NOT CHANGE
+#endif
 
   std::unique_ptr<PhongLightingIntegrator> integrator
       = std::make_unique<PhongLightingIntegrator>(camera, scene);
@@ -81,7 +85,10 @@ void setSceneById(std::shared_ptr<Scene> &scene, int id) {
 
     std::shared_ptr<Material>
             mat_grid =
-    std::make_shared<TextureMat>("..\\textures\\grid.png");
+    std::make_shared<TextureMat>("..\\textures\\stone_diff.png");
+    std::shared_ptr<Material>
+            mat_block =
+    std::make_shared<MutliTextureMat>("..\\textures\\stone_diff.png","..\\textures\\stone_normal.png");
 
   std::shared_ptr<Geometry>
       floor = std::make_shared<Rectangle>(Vec3f(0, 0, 0), Vec2f(2, 2), Vec3f(0, 0, 1), Vec3f(1, 0, 0));
@@ -125,24 +132,26 @@ void setSceneById(std::shared_ptr<Scene> &scene, int id) {
     case 1:
         floor->setMaterial(mat_grid);
           ceiling->setMaterial(mat_white);
-          wall_back->setMaterial(mat_white);
+          wall_back->setMaterial(mat_block);
           wall_left->setMaterial(mat_red);
           wall_right->setMaterial(mat_green);
           scene->addGeometry(floor);
-          scene->addGeometry(ceiling);
-          scene->addGeometry(wall_left);
-          scene->addGeometry(wall_right);
+//          scene->addGeometry(ceiling);
+//          scene->addGeometry(wall_left);
+//          scene->addGeometry(wall_right);
           scene->addGeometry(wall_back);
-          addEllipsoidToScene(scene,
-                              mat_grid,
-                              Vec3f(0.5, 0.4, 0.4),
-                              Vec3f(0.3, 0.1, 0),
-                              Vec3f(-0.1, 0.3, 0),
-                              Vec3f(0, 0, 0.4));
+//          addEllipsoidToScene(scene,
+//                              mat_grid,
+//                              Vec3f(0.5, 0.4, 0.4),
+//                              Vec3f(0.3, 0.1, 0),
+//                              Vec3f(-0.1, 0.3, 0),
+//                              Vec3f(0, 0, 0.4));
           scene->setLight(square_light);
           scene->setAmbient(Vec3f(0.1, 0.1, 0.1));
           break;
-    default:break;
+
+          default:
+        break;
   }
 
 }

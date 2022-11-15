@@ -57,3 +57,33 @@ InteractionPhongLightingModel TextureMat::evaluate(Interaction &interaction) con
     m.shininess = 32;
     return m;
 }
+
+MutliTextureMat::MutliTextureMat(std::string texturepath,std::string normalpath) : TextureMat(texturepath) {
+    int w, h, n;
+    unsigned char *raw_data = stbi_load(normalpath.c_str(), &w, &h, &n, 0);
+    int pixelCount = 0;
+    for (int H = 0; H < h; ++H) {
+        normals.emplace_back(w);
+        for (int W = 0; W < w; ++W) {
+            RGBColor rgbColor{};
+            rgbColor.R = (float) raw_data[pixelCount++] / 255.0f;
+            rgbColor.G = (float) raw_data[pixelCount++] / 255.0f;
+            rgbColor.B = (float) raw_data[pixelCount++] / 255.0f;
+            normals[H][W]=rgbColor;
+        }
+    }
+    stbi_image_free(raw_data);
+}
+
+InteractionPhongLightingModel MutliTextureMat::evaluate(Interaction &interaction) const {
+    auto phongmodel=TextureMat::evaluate(interaction);
+    //TODO 现在使用了nearest插值，可以考虑双线性插值
+    int u = round(interaction.uv(0) * (texture_width-1));
+    int v = round(interaction.uv(1) * (texture_height-1));
+    RGBColor nr=normals[v][u];
+    nr.R=nr.R*2-1;
+    nr.G=nr.G*2-1;
+    nr.B=nr.B*2-1;
+    interaction.normal=(interaction.normal*nr.B+interaction.tangent*nr.R+interaction.tangent.cross(interaction.normal)*nr.G).normalized();
+    return phongmodel;
+}

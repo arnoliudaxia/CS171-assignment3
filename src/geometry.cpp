@@ -27,6 +27,8 @@ bool Triangle::intersect(Ray &ray, Interaction &interaction) const {
     interaction.type = Interaction::GEOMETRY;
     interaction.pos = interactionPoint;
     //TODO uv here
+//    int x=interactionPoint.x(),y=interactionPoint.y()
+//    float alpha=(-(interactionPoint.x()-v1.x())*(v2.z()-v1.y())+(interactionPoint.y()-v1.y()))/();
     interaction.normal = normal;
     interaction.dist = t;
     if (material != nullptr) {
@@ -65,6 +67,7 @@ bool Rectangle::intersect(Ray &ray, Interaction &interaction) const {
     float u=(intersectPoint-position).dot(tangent)/size(0)+0.5;
     float v=(intersectPoint-position).dot(normal.cross(tangent))/size(1)+0.5;
     interaction.uv=Vec2f(u,v);
+    interaction.tangent=tangent;
     if (material != nullptr) {
         interaction.model = material->evaluate(interaction);
     }
@@ -137,7 +140,7 @@ bool Ellipsoid::intersect(Ray &ray, Interaction &interaction) const {
         interaction.normal = (M * Vec4f(transformed_point.x(), transformed_point.y(), transformed_point.z(),
                                         0)).head<3>().normalized();
         interaction.type = Interaction::GEOMETRY;
-        
+
         float theta = acosf(transformed_point.y())/PI;
         float phi = abs(atan2f(transformed_point.z(), transformed_point.x()))/PI;
         interaction.uv[0] = phi;

@@ -15,6 +15,7 @@ struct Interaction {
   Vec3f pos{};
   float dist{RAY_DEFAULT_MAX};
   Vec3f normal{};
+  Vec3f tangent{};
   Vec2f uv{};
   InteractionPhongLightingModel model;
   Type type{Type::NONE};
