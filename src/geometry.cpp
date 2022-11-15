@@ -1,4 +1,5 @@
 #include "geometry.h"
+#include "camera.h"
 
 #include <utility>
 
@@ -19,13 +20,16 @@ bool Triangle::intersect(Ray &ray, Interaction &interaction) const {
     float method_cross1 = ivline1.cross(ivline2).dot(normal);
     float method_cross2 = ivline2.cross(ivline3).dot(normal);
     float method_cross3 = ivline3.cross(ivline1).dot(normal);
-    if ((method_cross1 * method_cross2 < 0) || (method_cross2 * method_cross3 < 0) || (method_cross1 * method_cross3 < 0)) {
+    if ((method_cross1 * method_cross2 < 0) || (method_cross2 * method_cross3 < 0) ||
+        (method_cross1 * method_cross3 < 0)) {
         //点不在三角形里面
         return false;
     }
     interaction.type = Interaction::GEOMETRY;
     interaction.pos = interactionPoint;
     //TODO uv here
+//    int x=interactionPoint.x(),y=interactionPoint.y()
+//    float alpha=(-(interactionPoint.x()-v1.x())*(v2.z()-v1.y())+(interactionPoint.y()-v1.y()))/();
     interaction.normal = normal;
     interaction.dist = t;
     if (material != nullptr) {
@@ -40,7 +44,7 @@ Rectangle::Rectangle(Vec3f position, Vec2f dimension, Vec3f normal, Vec3f tangen
           size(std::move(dimension)),
           normal(std::move(normal)),
           tangent(std::move(tangent)) {}
-
+extern std::shared_ptr<Camera> camera;
 bool Rectangle::intersect(Ray &ray, Interaction &interaction) const {
     //ray上的点和中心的连线和法线点积为0
     float t = (normal.dot(position - ray.origin)) / (ray.direction.dot(normal));
@@ -57,13 +61,21 @@ bool Rectangle::intersect(Ray &ray, Interaction &interaction) const {
         return false;
     }
     interaction.dist = t * ray.direction.norm();
-    if (material != nullptr) {
-        interaction.model = material->evaluate(interaction);
-    }
+
     interaction.pos = intersectPoint;
     interaction.normal = normal;
     interaction.type = Interaction::GEOMETRY;
-    //TODO texture uv
+    float offset_x=(intersectPoint-position).dot(tangent);
+    float offset_y=(intersectPoint-position).dot(normal.cross(tangent));
+    float u=offset_x/size(0)+0.5;
+    float v=offset_y/size(1)+0.5;
+    interaction.uv=Vec2f(u,v);
+    interaction.tangent=tangent;
+    auto uvd=camera->getdxdy(intersectPoint);
+    interaction.dudv=sqrt(uvd(0)*uvd(0)+uvd(1)*uvd(1));
+    if (material != nullptr) {
+        interaction.model = material->evaluate(interaction);
+    }
     return true;
 }
 
@@ -125,19 +137,19 @@ bool Ellipsoid::intersect(Ray &ray, Interaction &interaction) const {
     float t_exit = t_center + tv;
     if (t_enter > 1e-4 || t_exit < ray.t_max) {
         t_enter = t_enter < 1e-4 ? 0 : t_enter;
-        t_enter=t_enter==0?t_exit:t_enter;
+        t_enter = t_enter == 0 ? t_exit : t_enter;
         //// initialize vec4
         Vec3f transformed_point = (ray_origin + t_enter * ray_direction);
         interaction.pos = (M * Vec4f(transformed_point.x(), transformed_point.y(), transformed_point.z(), 1)).head<3>();
         interaction.dist = t_enter;
-        interaction.normal = (M * Vec4f(transformed_point.x(), transformed_point.y(), transformed_point.z(), 0)).head<3>().normalized();
+        interaction.normal = (M * Vec4f(transformed_point.x(), transformed_point.y(), transformed_point.z(),
+                                        0)).head<3>().normalized();
         interaction.type = Interaction::GEOMETRY;
 
-//TODO 为什么加了UV会错
-        //        float theta = acosf(变换碰撞点.y());
-//        float phi = abs(atan2f(变换碰撞点.z(), 变换碰撞点.x()));
-//        interaction.uv[0] = phi;
-//        interaction.uv[1] = theta;
+        float theta = acosf(transformed_point.y())/PI;
+        float phi = abs(atan2f(transformed_point.z(), transformed_point.x()))/PI;
+        interaction.uv[0] = phi;
+        interaction.uv[1] = theta;
         if (material != nullptr) {
             interaction.model = material->evaluate(interaction);
         }

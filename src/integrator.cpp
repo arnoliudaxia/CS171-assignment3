@@ -25,7 +25,9 @@ void PhongLightingIntegrator::render() const {
             if (scene->intersect(ray, interaction)) {
                 L += 4*radiance(ray, interaction);
             }
-            const int SAMPLE_TIMES = 2;
+            const int SAMPLE_TIMES = 0;
+            goto SKIPANITI;
+//            SAMPLE_TIMES = 2;
             for (int i = 0; i < SAMPLE_TIMES; ++i) {
                 for (int j = 0; j < SAMPLE_TIMES; ++j) {
                     float offsetx = 1.f * i / SAMPLE_TIMES / 2 - .25;
@@ -42,6 +44,7 @@ void PhongLightingIntegrator::render() const {
                 }
 
             }
+            SKIPANITI:
             camera->getImage()->setPixel(dx, dy, L / (SAMPLE_TIMES * SAMPLE_TIMES+4));
         }
     }

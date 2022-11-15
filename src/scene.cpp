@@ -11,13 +11,10 @@ void Scene::setLight(const std::shared_ptr<Light> &new_light) {
 }
 
 bool Scene::isShadowed(Ray &shadow_ray) {
-    // TODO: isShadowed有问题
     Interaction it;
     for (auto geo: geometries) {
-        if(geo->intersect(shadow_ray, it))
-        {
-            if(it.dist>1e-4&&it.dist<shadow_ray.t_max)
-            {
+        if (geo->intersect(shadow_ray, it)) {
+            if (it.dist > 1e-4 && it.dist < shadow_ray.t_max) {
                 return true;
             }
         }
@@ -32,7 +29,6 @@ bool Scene::isShadowed(Ray &shadow_ray) {
  * @return
  */
 bool Scene::intersect(Ray &ray, Interaction &interaction) {
-    // TODO: Scene::intersect
     Interaction thisinteraction;
     bool isHit = false;
     if (light->intersect(ray, interaction)) {
