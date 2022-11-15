@@ -1,4 +1,5 @@
 #include "geometry.h"
+#include "camera.h"
 
 #include <utility>
 
@@ -43,7 +44,7 @@ Rectangle::Rectangle(Vec3f position, Vec2f dimension, Vec3f normal, Vec3f tangen
           size(std::move(dimension)),
           normal(std::move(normal)),
           tangent(std::move(tangent)) {}
-
+extern std::shared_ptr<Camera> camera;
 bool Rectangle::intersect(Ray &ray, Interaction &interaction) const {
     //ray上的点和中心的连线和法线点积为0
     float t = (normal.dot(position - ray.origin)) / (ray.direction.dot(normal));
@@ -64,10 +65,14 @@ bool Rectangle::intersect(Ray &ray, Interaction &interaction) const {
     interaction.pos = intersectPoint;
     interaction.normal = normal;
     interaction.type = Interaction::GEOMETRY;
-    float u=(intersectPoint-position).dot(tangent)/size(0)+0.5;
-    float v=(intersectPoint-position).dot(normal.cross(tangent))/size(1)+0.5;
+    float offset_x=(intersectPoint-position).dot(tangent);
+    float offset_y=(intersectPoint-position).dot(normal.cross(tangent));
+    float u=offset_x/size(0)+0.5;
+    float v=offset_y/size(1)+0.5;
     interaction.uv=Vec2f(u,v);
     interaction.tangent=tangent;
+    auto uvd=camera->getdxdy(intersectPoint);
+    interaction.dudv=sqrt(uvd(0)*uvd(0)+uvd(1)*uvd(1));
     if (material != nullptr) {
         interaction.model = material->evaluate(interaction);
     }

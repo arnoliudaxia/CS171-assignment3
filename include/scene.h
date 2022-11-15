@@ -24,7 +24,6 @@ class Scene {
   std::shared_ptr<Light> light;
   Vec3f ambient_light;
 };
-
 void addTetrahedronToScene(std::shared_ptr<Scene> &scene, std::shared_ptr<Material> &mat,
                            const Vec3f &v0,
                            const Vec3f &v1,

@@ -19,6 +19,7 @@ struct Interaction {
   Vec2f uv{};
   InteractionPhongLightingModel model;
   Type type{Type::NONE};
+  float dudv{};
 };
 
 #endif //CS171_HW3_INCLUDE_INTERACTION_H_

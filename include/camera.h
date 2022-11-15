@@ -4,29 +4,41 @@
 #include "core.h"
 #include "ray.h"
 #include "image.h"
-
 class Camera {
- public:
-  Camera();
+public:
+    Camera();
 
-  Ray generateRay(float x, float y);
-  void lookAt(const Vec3f &look_at, const Vec3f &ref_up = {0, 0, 1});
+    Ray generateRay(float x, float y);
 
-  void setPosition(const Vec3f &pos);
-  [[nodiscard]] Vec3f getPosition() const;
-  void setFov(float new_fov);
-  [[nodiscard]] float getFov() const;
-  void setImage(std::shared_ptr<ImageRGB> &img);
-  [[nodiscard]] std::shared_ptr<ImageRGB> &getImage();
- private:
-  Vec3f position;
-  Vec3f forward;
-  Vec3f up;
-  Vec3f right;
-  float focal_len;
-  float fov;
+    void lookAt(const Vec3f &look_at, const Vec3f &ref_up = {0, 0, 1});
 
-  std::shared_ptr<ImageRGB> image;
+    void setPosition(const Vec3f &pos);
+
+    [[nodiscard]] Vec3f getPosition() const;
+
+    void setFov(float new_fov);
+
+    [[nodiscard]] float getFov() const;
+
+    void setImage(std::shared_ptr<ImageRGB> &img);
+
+    [[nodiscard]] std::shared_ptr<ImageRGB> &getImage();
+
+    Vec2f getdxdy(Vec3f positionInWorld);
+
+private:
+    Vec3f position;
+    Vec3f forward;
+    Vec3f up;
+    Vec3f right;
+    float focal_len;
+    float fov;
+    float dxInImagePlane;
+
+    std::shared_ptr<ImageRGB> image;
+    Vec2i resolution;
+    float dx_perPixel;
+    float dy_perPixel;
 };
 
 #endif //CS171_HW3_INCLUDE_CAMERA_H_

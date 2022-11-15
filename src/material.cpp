@@ -1,5 +1,6 @@
 #include "material.h"
 #include "stb_image.h"
+#include "camera.h"
 
 #include <utility>
 
@@ -110,8 +111,28 @@ MipMapTextureMat::MipMapTextureMat(std::string texturepath) : TextureMat(texture
 }
 
 InteractionPhongLightingModel MipMapTextureMat::evaluate(Interaction &interaction) const {
-    //TODO donot
-    return TextureMat::evaluate(interaction);
+    auto phongmodel=TextureMat::evaluate(interaction);
+    //现在考虑取第几曾
+    float L=interaction.dudv*100-1;
+//    printf("%f.04\n",L);
+    int D= (int)log2(L);
+    if(D>mipmap.size()-1)
+    {
+        D=mipmap.size()-1;
+    }
+    if(D==0)
+    {
+        phongmodel.diffusion=Vec3f (1,0,0);
+    }
+    if(D==1)
+    {
+        phongmodel.diffusion=Vec3f (0,1,0);
+    }
+    if(D>=2)
+    {
+        phongmodel.diffusion=Vec3f (0,0,1);
+    }
+    return phongmodel;
 }
 
 TextureMat::RGBColor TextureMat::RGBColor::operator+(TextureMat::RGBColor other) const {
