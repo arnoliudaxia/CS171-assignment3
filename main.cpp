@@ -12,9 +12,9 @@ void setSceneById(std::shared_ptr<Scene> &scene, int id);
 
 int main(int argc, char *argv[]) {
 #ifndef TESTBYGITHUB                    // PLEASE DO NOT CHANGE
-  Vec2i img_resolution(400, 400);
+//  Vec2i img_resolution(400, 400);
 //  Vec2i img_resolution(32, 32);
-//  Vec2i img_resolution(60, 60);
+  Vec2i img_resolution(60, 60);
 //  Vec2i img_resolution(100, 100);
 #else                                   // PLEASE DO NOT CHANGE
     Vec2i img_resolution(32, 32);     // PLEASE DO NOT CHANGE
@@ -85,13 +85,16 @@ void setSceneById(std::shared_ptr<Scene> &scene, int id) {
 
     std::shared_ptr<Material>
             mat_grid =
-    std::make_shared<TextureMat>("..\\textures\\stone_diff.png");
+    std::make_shared<TextureMat>("..\\textures\\grid.png");
     std::shared_ptr<Material>
-            mat_block =
-    std::make_shared<MutliTextureMat>("..\\textures\\stone_diff.png","..\\textures\\stone_normal.png");
+            mat_grid_mipmap =
+    std::make_shared<MipMapTextureMat>("..\\textures\\grid.png");
+//    std::shared_ptr<Material>
+//            mat_block =
+//    std::make_shared<MutliTextureMat>("..\\textures\\stone_diff.png","..\\textures\\stone_normal.png");
 
   std::shared_ptr<Geometry>
-      floor = std::make_shared<Rectangle>(Vec3f(0, 0, 0), Vec2f(2, 2), Vec3f(0, 0, 1), Vec3f(1, 0, 0));
+      floor = std::make_shared<Rectangle>(Vec3f(0, 0, 0), Vec2f(5,10), Vec3f(0, 0, 1), Vec3f(1, 0, 0));
   std::shared_ptr<Geometry>
       ceiling = std::make_shared<Rectangle>(Vec3f(0, 0, 2), Vec2f(2, 2), Vec3f(0, 0, -1), Vec3f(1, 0, 0));
   std::shared_ptr<Geometry>
@@ -131,15 +134,15 @@ void setSceneById(std::shared_ptr<Scene> &scene, int id) {
     }
     case 1:
         floor->setMaterial(mat_grid);
-          ceiling->setMaterial(mat_white);
-          wall_back->setMaterial(mat_block);
-          wall_left->setMaterial(mat_red);
-          wall_right->setMaterial(mat_green);
+//          ceiling->setMaterial(mat_white);
+//          wall_back->setMaterial(mat_block);
+//          wall_left->setMaterial(mat_red);
+//          wall_right->setMaterial(mat_green);
           scene->addGeometry(floor);
 //          scene->addGeometry(ceiling);
 //          scene->addGeometry(wall_left);
 //          scene->addGeometry(wall_right);
-          scene->addGeometry(wall_back);
+//          scene->addGeometry(wall_back);
 //          addEllipsoidToScene(scene,
 //                              mat_grid,
 //                              Vec3f(0.5, 0.4, 0.4),
@@ -149,6 +152,7 @@ void setSceneById(std::shared_ptr<Scene> &scene, int id) {
           scene->setLight(square_light);
           scene->setAmbient(Vec3f(0.1, 0.1, 0.1));
           break;
+
 
           default:
         break;

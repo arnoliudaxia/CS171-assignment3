@@ -30,16 +30,18 @@ public:
         float R;
         float G;
         float B;
+        RGBColor operator +(RGBColor other) const;
+        RGBColor operator /(int value) const;
     };
     TextureMat()= default;
     explicit TextureMat(std::string texturepath);
     [[nodiscard]] InteractionPhongLightingModel evaluate(Interaction &interaction) const override;
-private:
-    //对于u,v上的点是rbgs[v][u]
-    std::vector<std::vector<RGBColor>> rgbs;
+
 protected:
     int texture_width;
     int texture_height;
+//对于u,v上的点是rbgs[v][u]
+std::vector<std::vector<RGBColor>> rgbs;
 };
 
 class MutliTextureMat : public TextureMat {
@@ -50,5 +52,16 @@ public:
 private:
     std::vector<std::vector<RGBColor>> normals;
 
+};
+
+class MipMapTextureMat : public TextureMat {
+public:
+    MipMapTextureMat()= default;
+    explicit MipMapTextureMat(std::string texturepath);
+    [[nodiscard]] InteractionPhongLightingModel evaluate(Interaction &interaction) const override;
+private:
+    //第一层是level，第二层是u，第三层是v
+    std::vector<std::vector<std::vector<RGBColor>>> mipmap;
+    int level=0;
 };
 #endif //CS171_HW3_INCLUDE_MATERIAL_H_

@@ -87,3 +87,45 @@ InteractionPhongLightingModel MutliTextureMat::evaluate(Interaction &interaction
     interaction.normal=(interaction.normal*nr.B+interaction.tangent*nr.R+interaction.tangent.cross(interaction.normal)*nr.G).normalized();
     return phongmodel;
 }
+
+
+MipMapTextureMat::MipMapTextureMat(std::string texturepath) : TextureMat(texturepath) {
+    level=(int) log2(texture_width);
+//    mipmap.emplace_back((int) log2(texture_width));
+    mipmap.push_back(rgbs);
+    for (int i = 1; i < level; ++i) {
+        //生成第i层
+        std::vector<std::vector<RGBColor>> levelrgbs;
+        int levelWidth=mipmap[i-1].size();
+        levelWidth=levelWidth-levelWidth%2;
+        for (int y = 0; y < levelWidth; ++++y) {
+        levelrgbs.emplace_back(levelWidth/2);
+            for (int x = 0; x < levelWidth; ++++x) {
+                levelrgbs[y/2][x/2]=(mipmap[i-1][y][x]+mipmap[i-1][y][x+1]+mipmap[i-1][y+1][x]+mipmap[i-1][y+1][x+1])/4;
+            }
+        }
+        mipmap.push_back(std::move(levelrgbs));
+    }
+
+}
+
+InteractionPhongLightingModel MipMapTextureMat::evaluate(Interaction &interaction) const {
+    //TODO donot
+    return TextureMat::evaluate(interaction);
+}
+
+TextureMat::RGBColor TextureMat::RGBColor::operator+(TextureMat::RGBColor other) const {
+    RGBColor result;
+    result.R=this->R+other.R;
+    result.G=this->G+other.G;
+    result.B=this->B+other.B;
+    return result;
+}
+
+TextureMat::RGBColor TextureMat::RGBColor::operator/(int value) const {
+    TextureMat::RGBColor result;
+    result.R=this->R/value;
+    result.G=this->G/value;
+    result.B=this->B/value;
+    return result;
+}
