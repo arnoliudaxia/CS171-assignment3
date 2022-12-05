@@ -1,8 +1,8 @@
 [![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-c66648af7eb3fe8bc4f294546bfd86ef473780cde1dea487d3c4ff354943c9ae.svg)](https://classroom.github.com/online_ide?assignment_repo_id=9228534&assignment_repo_type=AssignmentRepo)
 # Assignment 3: Ray Tracing Basics
 
-Name:  刘翼飞
-Student ID:  2020533131
+Name:  我对胡桃一心一意
+Student ID:  114514
 
 **Please write your Chinese name and your student ID in this README.**
 
